@@ -18,9 +18,20 @@ export function useTasks() {
   // État React pour stocker la liste des tâches
   // useState retourne [valeur, fonctionPourModifierLaValeur]
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
-  
-  // Compteur pour générer des IDs uniques pour les nouvelles tâches
-  const [nextId, setNextId] = useState<number>(initialTasks.length + 1)
+
+  /**
+   * Génère un UUID v4 simple pour les nouvelles tâches
+   * En production, les UUID seront générés par Supabase
+   * 
+   * @returns Un UUID v4 sous forme de string
+   */
+  const generateUUID = (): string => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0
+      const v = c === 'x' ? r : (r & 0x3) | 0x8
+      return v.toString(16)
+    })
+  }
 
   /**
    * Ajoute une nouvelle tâche à la liste
@@ -34,40 +45,45 @@ export function useTasks() {
     // Ne pas ajouter de tâche vide
     if (!trimmed) return
 
-    // Créer un nouvel objet Task avec un ID unique
+    // Générer un UUID pour la nouvelle tâche
+    const now = new Date().toISOString()
+
+    // Créer un nouvel objet Task avec un UUID et les timestamps
     const newTask: Task = {
-      id: nextId,
+      id: generateUUID(),
+      user_id: null, // Sera défini lors de l'intégration avec l'authentification
       label: trimmed,
-      done: false
+      done: false,
+      created_at: now,
+      updated_at: now
     }
 
     // Mettre à jour l'état : ajouter la nouvelle tâche en tête de liste
     // setTasks([newTask, ...tasks]) crée un nouveau tableau avec newTask en premier
     setTasks([newTask, ...tasks])
-    
-    // Incrémenter le compteur d'ID pour la prochaine tâche
-    setNextId(nextId + 1)
   }
 
   /**
    * Inverse l'état "done" d'une tâche (complétée <-> à faire)
    * 
-   * @param id - L'identifiant de la tâche à modifier
+   * @param id - L'identifiant UUID de la tâche à modifier
    */
-  const toggleTask = (id: number) => {
+  const toggleTask = (id: string) => {
     // map() crée un nouveau tableau en transformant chaque élément
     // On inverse la propriété 'done' de la tâche correspondant à l'ID
+    // et on met à jour le timestamp updated_at
+    const now = new Date().toISOString()
     setTasks(tasks.map(task =>
-      task.id === id ? { ...task, done: !task.done } : task
+      task.id === id ? { ...task, done: !task.done, updated_at: now } : task
     ))
   }
 
   /**
    * Supprime une tâche de la liste
    * 
-   * @param id - L'identifiant de la tâche à supprimer
+   * @param id - L'identifiant UUID de la tâche à supprimer
    */
-  const deleteTask = (id: number) => {
+  const deleteTask = (id: string) => {
     // filter() crée un nouveau tableau en gardant seulement les tâches
     // dont l'ID est différent de celui à supprimer
     setTasks(tasks.filter(task => task.id !== id))

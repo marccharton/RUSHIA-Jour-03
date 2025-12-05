@@ -10,14 +10,14 @@ interface TaskItemProps {
   task: Task
   /**
    * Fonction callback appelée quand l'utilisateur coche/décoche la tâche
-   * Reçoit l'ID de la tâche en paramètre
+   * Reçoit l'UUID de la tâche en paramètre
    */
-  onToggle: (id: number) => void
+  onToggle: (id: string) => void
   /**
    * Fonction callback appelée quand l'utilisateur supprime la tâche
-   * Reçoit l'ID de la tâche en paramètre
+   * Reçoit l'UUID de la tâche en paramètre
    */
-  onDelete: (id: number) => void
+  onDelete: (id: string) => void
 }
 
 /**

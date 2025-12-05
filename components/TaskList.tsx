@@ -11,14 +11,14 @@ interface TaskListProps {
   tasks: Task[]
   /**
    * Fonction callback appelée quand l'utilisateur coche/décoche une tâche
-   * Reçoit l'ID de la tâche en paramètre
+   * Reçoit l'UUID de la tâche en paramètre
    */
-  onToggleTask: (id: number) => void
+  onToggleTask: (id: string) => void
   /**
    * Fonction callback appelée quand l'utilisateur supprime une tâche
-   * Reçoit l'ID de la tâche en paramètre
+   * Reçoit l'UUID de la tâche en paramètre
    */
-  onDeleteTask: (id: number) => void
+  onDeleteTask: (id: string) => void
   /**
    * Indique si c'est la liste des tâches terminées
    * Utilisé pour appliquer des styles différents
