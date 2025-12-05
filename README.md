@@ -1,4 +1,4 @@
-# RUSH-IA – Jour 03 : Todolist Next.js
+# RUSH-IA – Jour 033 : Todolist Next.js
 
 Projet personnel réalisé dans le cadre du **rush "RUSH-IA" – Jour 3**, dont l’objectif est de :
 - découvrir l’outil **Cursor** et le **vibe coding** ;
