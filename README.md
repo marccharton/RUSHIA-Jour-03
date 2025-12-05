@@ -1,6 +1,8 @@
 # RUSH-IA – Jour 03 : Todolist Next.js
 
-Projet personnel réalisé dans le cadre du **rush "RUSH-IA" – Jour 3**, dont l’objectif est de :
+[![Vercel](https://img.shields.io/github/deployments/marccharton/RUSHIA-Jour-03/production?label=vercel&logo=vercel&logoColor=white)](https://vercel.com)
+
+Projet personnel réalisé dans le cadre du **rush "RUSH-IA" – Jour 3**, dont l'objectif est de :
 - découvrir l’outil **Cursor** et le **vibe coding** ;
 - prendre en main l’interface et le workflow IA ;
 - produire rapidement un petit projet tout en **gardant la maîtrise de ce qu’on génère**.
