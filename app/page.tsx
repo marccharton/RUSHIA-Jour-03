@@ -19,6 +19,7 @@ export default function Home() {
   // Utilisation du hook personnalisé pour gérer toute la logique des tâches
   const {
     addTask,
+    updateTask,
     toggleTask,
     deleteTask,
     todoCount,
@@ -162,6 +163,7 @@ export default function Home() {
                 tasks={todoTasks}
                 onToggleTask={toggleTask}
                 onDeleteTask={handleDeleteRequest}
+                onUpdateTask={updateTask}
                 newlyAddedTaskId={newlyAddedTaskId}
               />
             </div>

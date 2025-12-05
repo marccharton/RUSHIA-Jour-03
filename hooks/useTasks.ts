@@ -123,6 +123,57 @@ export function useTasks() {
   }
 
   /**
+   * Met à jour le label d'une tâche
+   * Met à jour la base de données Supabase pour persister le changement
+   * 
+   * @param id - L'identifiant UUID de la tâche à modifier
+   * @param newLabel - Le nouveau label de la tâche
+   */
+  const updateTask = async (id: string, newLabel: string) => {
+    // Trim pour enlever les espaces avant/après
+    const trimmed = newLabel.trim()
+    
+    // Ne pas mettre à jour avec un label vide
+    if (!trimmed) return
+
+    // Trouver la tâche à modifier
+    const taskToUpdate = tasks.find(task => task.id === id)
+    if (!taskToUpdate) {
+      return
+    }
+
+    // Mise à jour optimiste de l'état local
+    const now = new Date().toISOString()
+    setTasks(tasks.map(task =>
+      task.id === id ? { ...task, label: trimmed, updated_at: now } : task
+    ))
+
+    try {
+      // Mettre à jour le label dans Supabase
+      const { error: updateError } = await supabase
+        .from('tasks')
+        .update({ 
+          label: trimmed,
+          updated_at: now
+        })
+        .eq('id', id)
+
+      if (updateError) {
+        throw updateError
+      }
+    } catch (err) {
+      // En cas d'erreur, restaurer le label précédent
+      setTasks(tasks.map(task =>
+        task.id === id ? { ...task, label: taskToUpdate.label, updated_at: taskToUpdate.updated_at } : task
+      ))
+
+      // Afficher une erreur à l'utilisateur
+      setError(err instanceof Error ? err.message : 'Erreur lors de la mise à jour de la tâche')
+      setTimeout(() => setError(null), 5000)
+    }
+  }
+
+  /**
    * Inverse l'état "done" d'une tâche (complétée <-> à faire)
    * Met à jour la base de données Supabase pour persister le changement
    * 
@@ -220,6 +271,7 @@ export function useTasks() {
     newlyAddedTaskId, // ID de la tâche nouvellement ajoutée (pour l'animation)
     // Fonctions de manipulation
     addTask,
+    updateTask,
     toggleTask,
     deleteTask,
     fetchTasks, // Exposer la fonction pour permettre un rechargement manuel

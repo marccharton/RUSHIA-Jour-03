@@ -20,6 +20,11 @@ interface TaskListProps {
    */
   onDeleteTask: (id: string) => void
   /**
+   * Fonction callback appelée quand l'utilisateur modifie le label d'une tâche
+   * Reçoit l'UUID de la tâche et le nouveau label en paramètres
+   */
+  onUpdateTask?: (id: string, newLabel: string) => void
+  /**
    * Indique si c'est la liste des tâches terminées
    * Utilisé pour appliquer des styles différents
    */
@@ -43,6 +48,7 @@ export default function TaskList({
   tasks,
   onToggleTask,
   onDeleteTask,
+  onUpdateTask,
   isDoneList = false,
   newlyAddedTaskId = null,
 }: TaskListProps) {
@@ -62,6 +68,7 @@ export default function TaskList({
           task={task}
           onToggle={onToggleTask}
           onDelete={onDeleteTask}
+          onUpdate={onUpdateTask}
           isNewlyAdded={task.id === newlyAddedTaskId}
         />
       ))}
