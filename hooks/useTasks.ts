@@ -1,14 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Task } from '@/types'
-import { initialTasks } from '@/data/initialTasks'
+import { supabase } from '@/lib/supabase'
 
 /**
  * Hook personnalisé pour gérer la logique des tâches
  * 
  * Encapsule toute la logique de gestion des tâches :
- * - État des tâches et compteur d'ID
+ * - Récupération des tâches depuis Supabase
+ * - État des tâches et état de chargement
  * - Fonctions de manipulation (ajout, toggle, suppression)
  * - Calculs dérivés (statistiques, listes filtrées)
  * 
@@ -17,7 +18,56 @@ import { initialTasks } from '@/data/initialTasks'
 export function useTasks() {
   // État React pour stocker la liste des tâches
   // useState retourne [valeur, fonctionPourModifierLaValeur]
-  const [tasks, setTasks] = useState<Task[]>(initialTasks)
+  const [tasks, setTasks] = useState<Task[]>([])
+  
+  // État pour gérer le chargement des tâches
+  const [loading, setLoading] = useState<boolean>(true)
+  
+  // État pour gérer les erreurs
+  const [error, setError] = useState<string | null>(null)
+
+  /**
+   * Récupère les tâches depuis Supabase
+   * 
+   * Pour l'instant, récupère toutes les tâches.
+   * Plus tard, on pourra filtrer par user_id lors de l'implémentation de l'authentification.
+   */
+  const fetchTasks = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      // Récupérer toutes les tâches depuis la table 'tasks'
+      // On trie par created_at décroissant pour avoir les plus récentes en premier
+      const { data, error: fetchError } = await supabase
+        .from('tasks')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (fetchError) {
+        throw fetchError
+      }
+
+      // Convertir les données en format Task
+      // Supabase retourne les données avec les mêmes noms de colonnes
+      if (data) {
+        setTasks(data as Task[])
+      } else {
+        setTasks([])
+      }
+    } catch (err) {
+      console.error('Erreur lors de la récupération des tâches:', err)
+      setError(err instanceof Error ? err.message : 'Erreur inconnue lors du chargement des tâches')
+      setTasks([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Charger les tâches au montage du composant
+  useEffect(() => {
+    fetchTasks()
+  }, [])
 
   /**
    * Génère un UUID v4 simple pour les nouvelles tâches
@@ -102,10 +152,13 @@ export function useTasks() {
   return {
     // État
     tasks,
+    loading,
+    error,
     // Fonctions de manipulation
     addTask,
     toggleTask,
     deleteTask,
+    fetchTasks, // Exposer la fonction pour permettre un rechargement manuel
     // Statistiques
     todoCount,
     doneCount,

@@ -22,7 +22,9 @@ export default function Home() {
     doneCount,
     totalCount,
     todoTasks,
-    doneTasks
+    doneTasks,
+    loading,
+    error
   } = useTasks()
 
   return (
@@ -46,6 +48,20 @@ export default function Home() {
 
       {/* Contenu principal */}
       <main className="app-main">
+        {/* Affichage de l'état de chargement */}
+        {loading && (
+          <section className="task-loading">
+            <p>Chargement des tâches...</p>
+          </section>
+        )}
+
+        {/* Affichage des erreurs */}
+        {error && (
+          <section className="task-error">
+            <p style={{ color: 'red' }}>Erreur : {error}</p>
+          </section>
+        )}
+
         {/* Section pour ajouter une nouvelle tâche */}
         <section className="task-input">
           <h2>Ajouter une tâche</h2>
@@ -53,35 +69,39 @@ export default function Home() {
         </section>
 
         {/* Section des statistiques (compteurs) */}
-        <section className="task-stats">
-          <TaskStats
-            todoCount={todoCount}
-            doneCount={doneCount}
-            totalCount={totalCount}
-          />
-        </section>
+        {!loading && (
+          <section className="task-stats">
+            <TaskStats
+              todoCount={todoCount}
+              doneCount={doneCount}
+              totalCount={totalCount}
+            />
+          </section>
+        )}
 
         {/* Section des listes de tâches (À faire / Terminées) */}
-        <section className="task-lists">
-          <div className="task-column">
-            <h2>À faire</h2>
-            <TaskList
-              tasks={todoTasks}
-              onToggleTask={toggleTask}
-              onDeleteTask={deleteTask}
-            />
-          </div>
+        {!loading && (
+          <section className="task-lists">
+            <div className="task-column">
+              <h2>À faire</h2>
+              <TaskList
+                tasks={todoTasks}
+                onToggleTask={toggleTask}
+                onDeleteTask={deleteTask}
+              />
+            </div>
 
-          <div className="task-column">
-            <h2>Terminées</h2>
-            <TaskList
-              tasks={doneTasks}
-              onToggleTask={toggleTask}
-              onDeleteTask={deleteTask}
-              isDoneList={true}
-            />
-          </div>
-        </section>
+            <div className="task-column">
+              <h2>Terminées</h2>
+              <TaskList
+                tasks={doneTasks}
+                onToggleTask={toggleTask}
+                onDeleteTask={deleteTask}
+                isDoneList={true}
+              />
+            </div>
+          </section>
+        )}
       </main>
 
       {/* Pied de page */}
