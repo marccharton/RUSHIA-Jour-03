@@ -1,9 +1,12 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import TaskForm from '@/components/TaskForm'
 import TaskStats from '@/components/TaskStats'
 import TaskList from '@/components/TaskList'
+import ConfirmModal from '@/components/ConfirmModal'
 import { useTasks } from '@/hooks/useTasks'
+import { Task } from '@/types'
 
 /**
  * Composant principal de l'application Todolist
@@ -27,8 +30,71 @@ export default function Home() {
     error
   } = useTasks()
 
+  // État pour gérer la modale de confirmation de suppression
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null)
+  
+  // État pour gérer l'affichage du message de succès
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+
+  /**
+   * Gère la demande de suppression d'une tâche
+   * Ouvre la modale de confirmation
+   */
+  const handleDeleteRequest = (id: string) => {
+    // Trouver la tâche à supprimer dans toutes les tâches
+    const task = [...todoTasks, ...doneTasks].find(t => t.id === id)
+    if (task) {
+      setTaskToDelete(task)
+    }
+  }
+
+  /**
+   * Confirme la suppression de la tâche
+   */
+  const handleConfirmDelete = () => {
+    if (taskToDelete) {
+      const taskLabel = taskToDelete.label
+      deleteTask(taskToDelete.id)
+      setTaskToDelete(null)
+      
+      // Afficher le message de succès
+      setSuccessMessage(`Tâche "${taskLabel}" supprimée avec succès`)
+    }
+  }
+
+  /**
+   * Efface automatiquement le message de succès après 3 secondes
+   */
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage(null)
+      }, 3000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [successMessage])
+
+  /**
+   * Annule la suppression
+   */
+  const handleCancelDelete = () => {
+    setTaskToDelete(null)
+  }
+
   return (
     <div className="app">
+      {/* Modale de confirmation de suppression */}
+      <ConfirmModal
+        isOpen={taskToDelete !== null}
+        title="Supprimer la tâche ?"
+        message={taskToDelete ? `Êtes-vous sûr de vouloir supprimer "${taskToDelete.label}" ?` : ''}
+        confirmText="Supprimer"
+        cancelText="Annuler"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
+
       {/* En-tête de l'application */}
       <header className="app-header">
         <h1>Ma todolist</h1>
@@ -62,6 +128,13 @@ export default function Home() {
           </section>
         )}
 
+        {/* Affichage du message de succès */}
+        {successMessage && (
+          <section className="task-success">
+            <p>{successMessage}</p>
+          </section>
+        )}
+
         {/* Section pour ajouter une nouvelle tâche */}
         <section className="task-input">
           <h2>Ajouter une tâche</h2>
@@ -87,7 +160,7 @@ export default function Home() {
               <TaskList
                 tasks={todoTasks}
                 onToggleTask={toggleTask}
-                onDeleteTask={deleteTask}
+                onDeleteTask={handleDeleteRequest}
               />
             </div>
 
@@ -96,7 +169,7 @@ export default function Home() {
               <TaskList
                 tasks={doneTasks}
                 onToggleTask={toggleTask}
-                onDeleteTask={deleteTask}
+                onDeleteTask={handleDeleteRequest}
                 isDoneList={true}
               />
             </div>
