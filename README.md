@@ -1,17 +1,17 @@
-# RUSH-IA – Jour 01 : Todolist HTML/CSS/JS
+# RUSH-IA – Jour 03 : Todolist Next.js
 
-Projet personnel réalisé dans le cadre du **rush "RUSH-IA" – Jour 1**, dont l’objectif est de :
+Projet personnel réalisé dans le cadre du **rush "RUSH-IA" – Jour 3**, dont l’objectif est de :
 - découvrir l’outil **Cursor** et le **vibe coding** ;
 - prendre en main l’interface et le workflow IA ;
 - produire rapidement un petit projet tout en **gardant la maîtrise de ce qu’on génère**.
 
-Ce dépôt correspond à une **todolist très simple en HTML/CSS/JavaScript vanilla**, réalisée pour se concentrer avant tout sur l’outil.
+Ce dépôt correspond à une **todolist simple en Next.js/React/TypeScript**, migrée depuis une version HTML/CSS/JavaScript vanilla pour découvrir le framework Next.js.
 
 ---
 
 ## Présentation du projet
 
-Ce projet est une **application web de liste de tâches (todolist)** minimaliste, en **pur HTML/CSS/JavaScript** :
+Ce projet est une **application web de liste de tâches (todolist)** minimaliste, développée avec **Next.js 14**, **React** et **TypeScript** :
 - affichage d’une liste de tâches ;
 - possibilité de **cocher/décocher** une tâche ;
 - **séparation visuelle** entre tâches terminées et tâches restantes ;
@@ -19,7 +19,7 @@ Ce projet est une **application web de liste de tâches (todolist)** minimaliste
 - **suppression de tâches** via un bouton dédié sur chaque tâche ;
 - **compteur de tâches** affichant le nombre de tâches à faire et terminées.
 
-Pas de base de données externe : les données sont **simulées/stockées en JSON/in‑memory** côté front, afin de garder une stack simple et facilement maîtrisable pour un premier jour de rush.
+Pas de base de données externe : les données sont **stockées en mémoire** côté client (state React), afin de garder une stack simple et facilement maîtrisable.
 
 ---
 
@@ -31,67 +31,146 @@ Un aperçu de l’interface de la todolist :
 
 ---
 
-## Contexte "RUSH-IA" – Jour 1
+## Contexte "RUSH-IA" – Jour 3
 
 - **Type de projet** : projet perso dans le cadre d’un rush d’apprentissage.
-- **Thème du jour** : découverte de Cursor et du coding assisté par IA.
-- **Objectif principal** : produire une petite application fonctionnelle rapidement, sans perdre la compréhension du code.
-- **Participants** : nous sommes deux à faire le rush (chacun sur un projet différent).
-- **Règle du jour** : *découvrir l’outil et produire un truc rapidement en gardant la maîtrise de ce qu’on produit*.
-
-Il n’y a **pas de roadmap** longue : ce projet est pensé comme un **exercice de Jour 1** ; d’autres projets suivront pour la suite du rush.
+- **Thème du jour** : migration d'un projet vanilla vers Next.js.
+- **Objectif principal** : transformer un projet HTML/CSS/JS simple en application Next.js moderne, en conservant toutes les fonctionnalités.
+- **Règle du jour** : *garder exactement les mêmes fonctionnalités, juste changer la technologie*.
 
 ---
 
 ## Stack technique
 
-- **Technos** : HTML, CSS, JavaScript (vanilla)
-- **Données** : stockage **JSON simulé** (pas de BDD externe)
-- **Front** : interface web simple, sans framework ni librairies UI (objectif : rester concentré sur l’outil et le code de base).
+- **Framework** : Next.js 14 (App Router)
+- **Bibliothèque UI** : React 18
+- **Langage** : TypeScript
+- **Styling** : CSS global
+- **Données** : stockage en mémoire (state React)
+- **Architecture** : Composants React modulaires
 
 ---
 
 ## Installation
 
-Il n’y a **aucune installation complexe** :  
-le projet est une simple application front en HTML/CSS/JS.
+Le projet nécessite Node.js (version 18 ou supérieure) et npm (ou yarn, pnpm).
 
 Étapes :
 
 ```bash
+# Cloner le dépôt
 git clone <URL_DU_DEPOT>
-cd RUSHIA-Jour-01
-```
+cd RUSHIA-Jour-03
 
-Ensuite, il suffit d’ouvrir le fichier principal (par ex. `index.html`) dans un navigateur, ou via un petit serveur statique (Live Server, `npx serve`, etc.).
+# Installer les dépendances
+npm install
+# ou
+yarn install
+# ou
+pnpm install
+```
 
 ---
 
 ## Lancement du projet
 
-Pour lancer l’application :
-- ouvrir directement `index.html` dans un navigateur,  
-**ou**
-- lancer un petit serveur statique (par exemple avec une extension Live Server ou un outil de dev local).
+### Mode développement
 
-L’interface affichera une **todolist simple** :
+Pour lancer l'application en mode développement avec hot-reload :
+
+```bash
+npm run dev
+# ou
+yarn dev
+# ou
+pnpm dev
+```
+
+L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
+
+### Mode production
+
+Pour créer une build de production :
+
+```bash
+npm run build
+npm run start
+# ou
+yarn build
+yarn start
+# ou
+pnpm build
+pnpm start
+```
+
+L'interface affichera une **todolist simple** avec :
 - ajout de tâche via un champ dédié ;
 - liste des tâches à faire ;
-- liste des tâches terminées (ou séparation visuelle dans la même liste) ;
+- liste des tâches terminées (séparation visuelle en deux colonnes) ;
 - possibilité de cocher/décocher les tâches ;
 - suppression de tâches via un bouton de suppression sur chaque élément ;
 - compteur dynamique affichant le nombre de tâches à faire et terminées.
 
 ---
 
-## Structure (simplifiée)
+## Structure du projet
 
-Le projet suit une structure **web classique** :
-- un fichier `index.html` comme point d’entrée ;
-- un ou plusieurs fichiers CSS pour le style ;
-- un ou plusieurs fichiers JavaScript pour la logique de la todolist (gestion de l’état en mémoire, JSON).
+Le projet suit la structure **Next.js 14 avec App Router** :
 
-Aucune explication d’architecture complexe n’est nécessaire ici : **on reste volontairement sur quelque chose d’hyper simple et classique**.
+```
+RUSHIA-Jour-03/
+├── app/                    # Dossier App Router de Next.js
+│   ├── layout.tsx         # Layout racine de l'application
+│   ├── page.tsx           # Page principale (composant Todolist)
+│   └── globals.css        # Styles CSS globaux
+├── components/            # Composants React réutilisables
+│   ├── TaskForm.tsx       # Formulaire d'ajout de tâche
+│   ├── TaskStats.tsx      # Composant des statistiques (compteurs)
+│   ├── TaskList.tsx       # Liste de tâches
+│   └── TaskItem.tsx       # Élément de tâche individuelle
+├── package.json           # Dépendances et scripts npm
+├── tsconfig.json          # Configuration TypeScript
+├── next.config.js         # Configuration Next.js
+└── README.md              # Ce fichier
+```
+
+### Architecture des composants
+
+- **`app/page.tsx`** : Composant principal qui gère l'état global des tâches et coordonne les sous-composants
+- **`components/TaskForm.tsx`** : Formulaire pour ajouter une nouvelle tâche
+- **`components/TaskStats.tsx`** : Affichage des compteurs (À faire, Terminées, Total)
+- **`components/TaskList.tsx`** : Liste de tâches (à faire ou terminées)
+- **`components/TaskItem.tsx`** : Élément individuel de tâche avec checkbox et bouton de suppression
+
+---
+
+## Fonctionnalités
+
+### Ajout de tâches
+- Champ de saisie avec validation
+- Ajout en tête de liste
+- Réinitialisation automatique du champ après ajout
+
+### Gestion des tâches
+- Coche/décoche pour marquer une tâche comme terminée/à faire
+- Déplacement visuel automatique entre les colonnes "À faire" et "Terminées"
+- Suppression individuelle via bouton dédié
+
+### Statistiques
+- Compteur dynamique des tâches à faire
+- Compteur dynamique des tâches terminées
+- Compteur du total de tâches
+- Mise à jour en temps réel lors de toute modification
+
+---
+
+## Code commenté
+
+Tous les fichiers du projet contiennent des **commentaires explicatifs détaillés** :
+- Commentaires JSDoc pour les fonctions et composants
+- Explications des concepts React (hooks, state, props)
+- Documentation des fonctionnalités et de leur logique
+- Guide de compréhension de l'architecture Next.js
 
 ---
 
@@ -102,37 +181,37 @@ Aucune explication d’architecture complexe n’est nécessaire ici : **on rest
 
 ---
 
-## Objectifs pédagogiques & journal de bord – Jour 1
+## Migration depuis HTML/CSS/JS vanilla
 
-**Objectifs du jour 1**
-- Installer et configurer un projet Next.js basique.
-- Découvrir et pratiquer le **workflow avec Cursor** (génération, édition, navigation).
-- Mettre en place une petite todolist fonctionnelle :
-  - liste de tâches ;
-  - ajout de tâches ;
-  - différenciation entre tâches cochées et non cochées.
-- Garder une **bonne compréhension de tout le code produit**, même avec l’aide de l’IA.
+Ce projet a été migré depuis une version HTML/CSS/JavaScript vanilla vers Next.js. Les fonctionnalités restent **identiques**, seule la technologie a changé :
 
-**Journal de bord (résumé)**
-- Mise en place du dépôt et de l’environnement Node/Next.
-- Découverte de l’interface Cursor et des interactions avec l’IA.
-- Création de la première version de la todolist minimaliste.
-- Documentation du projet via ce `README.md`.
-- Ajout des fonctionnalités de suppression de tâches et de compteur dynamique.
+- ✅ Même design et styles CSS
+- ✅ Même fonctionnalités (ajout, toggle, suppression, compteurs)
+- ✅ Même comportement utilisateur
+- ✅ Architecture modulaire avec composants React
+- ✅ TypeScript pour la sécurité de type
+- ✅ Commentaires explicatifs ajoutés partout
 
 ---
 
-## Fonctionnalités ajoutées
+## Objectifs pédagogiques
 
-### Suppression de tâches
-Chaque tâche dispose désormais d’un bouton de suppression (icône poubelle) permettant de retirer définitivement une tâche de la liste, qu’elle soit terminée ou non.
+**Objectifs du jour 3**
+- Migrer un projet vanilla vers Next.js
+- Découvrir l'architecture Next.js avec App Router
+- Comprendre les composants React et la gestion d'état
+- Utiliser TypeScript dans un projet Next.js
+- Maintenir toutes les fonctionnalités existantes
+- Ajouter des commentaires explicatifs pour faciliter la compréhension
 
-### Compteur de tâches
-Un compteur dynamique affiche en temps réel :
-- le nombre de tâches **à faire** ;
-- le nombre de tâches **terminées** ;
-- le **total** de tâches.
+---
 
-Ces informations sont mises à jour automatiquement lors de l’ajout, de la suppression ou du changement d’état d’une tâche.
+## Technologies utilisées
+
+- [Next.js](https://nextjs.org/) - Framework React pour la production
+- [React](https://react.dev/) - Bibliothèque UI
+- [TypeScript](https://www.typescriptlang.org/) - Superset typé de JavaScript
+
+---
 
 Ce README pourra être enrichi au fil du rush si nécessaire (captures d’écran, détails techniques supplémentaires, etc.).
