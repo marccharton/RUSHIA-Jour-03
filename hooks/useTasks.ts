@@ -115,17 +115,46 @@ export function useTasks() {
 
   /**
    * Inverse l'état "done" d'une tâche (complétée <-> à faire)
+   * Met à jour la base de données Supabase pour persister le changement
    * 
    * @param id - L'identifiant UUID de la tâche à modifier
    */
-  const toggleTask = (id: string) => {
-    // map() crée un nouveau tableau en transformant chaque élément
-    // On inverse la propriété 'done' de la tâche correspondant à l'ID
-    // et on met à jour le timestamp updated_at
+  const toggleTask = async (id: string) => {
+    // Trouver la tâche à modifier
+    const taskToUpdate = tasks.find(task => task.id === id)
+    if (!taskToUpdate) {
+      return
+    }
+
+    // Nouvel état de la tâche (inversé)
+    const newDoneState = !taskToUpdate.done
     const now = new Date().toISOString()
+
+    // Mise à jour optimiste de l'état local (pour une meilleure UX)
     setTasks(tasks.map(task =>
-      task.id === id ? { ...task, done: !task.done, updated_at: now } : task
+      task.id === id ? { ...task, done: newDoneState, updated_at: now } : task
     ))
+
+    try {
+      // Mettre à jour le champ "done" dans Supabase
+      const { error: updateError } = await supabase
+        .from('tasks')
+        .update({ done: newDoneState })
+        .eq('id', id)
+
+      if (updateError) {
+        throw updateError
+      }
+    } catch (err) {
+      // En cas d'erreur, annuler le changement optimiste
+      setTasks(tasks.map(task =>
+        task.id === id ? { ...task, done: taskToUpdate.done, updated_at: taskToUpdate.updated_at } : task
+      ))
+
+      // Afficher une erreur à l'utilisateur
+      setError(err instanceof Error ? err.message : 'Erreur lors de la mise à jour de la tâche')
+      setTimeout(() => setError(null), 5000)
+    }
   }
 
   /**
