@@ -231,6 +231,23 @@ button[type="submit"]:active {
   border-style: dashed;
 }
 
+.task-item--newly-added {
+  background: rgba(34, 197, 94, 0.3) !important;
+  border-color: rgba(34, 197, 94, 0.6) !important;
+  animation: fadeToOriginal 2s ease-out forwards;
+}
+
+@keyframes fadeToOriginal {
+  0% {
+    background: rgba(34, 197, 94, 0.3);
+    border-color: rgba(34, 197, 94, 0.6);
+  }
+  100% {
+    background: rgba(15, 23, 42, 0.9);
+    border-color: rgba(51, 65, 85, 0.9);
+  }
+}
+
 .task-item input[type="checkbox"] {
   width: 18px;
   height: 18px;

@@ -18,6 +18,10 @@ interface TaskItemProps {
    * Reçoit l'UUID de la tâche en paramètre
    */
   onDelete: (id: string) => void
+  /**
+   * ID de la tâche nouvellement ajoutée (pour l'animation)
+   */
+  isNewlyAdded?: boolean
 }
 
 /**
@@ -32,7 +36,7 @@ interface TaskItemProps {
  * Ce composant est "présentationnel" : il reçoit les données et les callbacks,
  * et délègue les actions au composant parent
  */
-export default function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
+export default function TaskItem({ task, onToggle, onDelete, isNewlyAdded = false }: TaskItemProps) {
   /**
    * Gestionnaire d'événement pour la checkbox
    * Appelle la fonction onToggle avec l'ID de la tâche
@@ -51,7 +55,7 @@ export default function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
 
   return (
     <li
-      className={`task-item ${task.done ? 'task-item--done' : ''}`}
+      className={`task-item ${task.done ? 'task-item--done' : ''} ${isNewlyAdded ? 'task-item--newly-added' : ''}`}
       data-id={task.id}
     >
       {/* Checkbox pour cocher/décocher la tâche */}

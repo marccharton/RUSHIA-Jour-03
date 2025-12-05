@@ -24,6 +24,10 @@ interface TaskListProps {
    * Utilisé pour appliquer des styles différents
    */
   isDoneList?: boolean
+  /**
+   * ID de la tâche nouvellement ajoutée (pour l'animation)
+   */
+  newlyAddedTaskId?: string | null
 }
 
 /**
@@ -40,6 +44,7 @@ export default function TaskList({
   onToggleTask,
   onDeleteTask,
   isDoneList = false,
+  newlyAddedTaskId = null,
 }: TaskListProps) {
   return (
     <ul
@@ -57,6 +62,7 @@ export default function TaskList({
           task={task}
           onToggle={onToggleTask}
           onDelete={onDeleteTask}
+          isNewlyAdded={task.id === newlyAddedTaskId}
         />
       ))}
     </ul>

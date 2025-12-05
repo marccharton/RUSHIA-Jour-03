@@ -25,6 +25,9 @@ export function useTasks() {
   
   // État pour gérer les erreurs
   const [error, setError] = useState<string | null>(null)
+  
+  // État pour suivre l'ID de la tâche nouvellement ajoutée (pour l'animation)
+  const [newlyAddedTaskId, setNewlyAddedTaskId] = useState<string | null>(null)
 
   /**
    * Récupère les tâches depuis Supabase
@@ -70,47 +73,53 @@ export function useTasks() {
   }, [])
 
   /**
-   * Génère un UUID v4 simple pour les nouvelles tâches
-   * En production, les UUID seront générés par Supabase
-   * 
-   * @returns Un UUID v4 sous forme de string
-   */
-  const generateUUID = (): string => {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = (Math.random() * 16) | 0
-      const v = c === 'x' ? r : (r & 0x3) | 0x8
-      return v.toString(16)
-    })
-  }
-
-  /**
    * Ajoute une nouvelle tâche à la liste
+   * Insère la tâche dans Supabase pour la persister
    * 
    * @param label - Le texte de la tâche à ajouter
    */
-  const addTask = (label: string) => {
+  const addTask = async (label: string) => {
     // Trim pour enlever les espaces avant/après
     const trimmed = label.trim()
     
     // Ne pas ajouter de tâche vide
     if (!trimmed) return
 
-    // Générer un UUID pour la nouvelle tâche
-    const now = new Date().toISOString()
+    try {
+      // Insérer la nouvelle tâche dans Supabase
+      // Supabase générera automatiquement l'UUID et les timestamps
+      const { data, error: insertError } = await supabase
+        .from('tasks')
+        .insert({
+          label: trimmed,
+          done: false,
+          user_id: null // Sera défini lors de l'intégration avec l'authentification
+        })
+        .select()
+        .single()
 
-    // Créer un nouvel objet Task avec un UUID et les timestamps
-    const newTask: Task = {
-      id: generateUUID(),
-      user_id: null, // Sera défini lors de l'intégration avec l'authentification
-      label: trimmed,
-      done: false,
-      created_at: now,
-      updated_at: now
+      if (insertError) {
+        throw insertError
+      }
+
+      // Si la tâche a été créée avec succès, l'ajouter à l'état local
+      if (data) {
+        const newTask = data as Task
+        setTasks([newTask, ...tasks])
+        
+        // Marquer la tâche comme nouvellement ajoutée pour l'animation
+        setNewlyAddedTaskId(newTask.id)
+        
+        // Retirer la classe après 2 secondes
+        setTimeout(() => {
+          setNewlyAddedTaskId(null)
+        }, 2000)
+      }
+    } catch (err) {
+      // Afficher une erreur à l'utilisateur
+      setError(err instanceof Error ? err.message : 'Erreur lors de l\'ajout de la tâche')
+      setTimeout(() => setError(null), 5000)
     }
-
-    // Mettre à jour l'état : ajouter la nouvelle tâche en tête de liste
-    // setTasks([newTask, ...tasks]) crée un nouveau tableau avec newTask en premier
-    setTasks([newTask, ...tasks])
   }
 
   /**
@@ -208,6 +217,7 @@ export function useTasks() {
     tasks,
     loading,
     error,
+    newlyAddedTaskId, // ID de la tâche nouvellement ajoutée (pour l'animation)
     // Fonctions de manipulation
     addTask,
     toggleTask,

@@ -27,7 +27,8 @@ export default function Home() {
     todoTasks,
     doneTasks,
     loading,
-    error
+    error,
+    newlyAddedTaskId
   } = useTasks()
 
   // État pour gérer la modale de confirmation de suppression
@@ -161,6 +162,7 @@ export default function Home() {
                 tasks={todoTasks}
                 onToggleTask={toggleTask}
                 onDeleteTask={handleDeleteRequest}
+                newlyAddedTaskId={newlyAddedTaskId}
               />
             </div>
 
@@ -171,6 +173,7 @@ export default function Home() {
                 onToggleTask={toggleTask}
                 onDeleteTask={handleDeleteRequest}
                 isDoneList={true}
+                newlyAddedTaskId={newlyAddedTaskId}
               />
             </div>
           </section>
