@@ -98,7 +98,16 @@ export default function Home() {
       <header className="app-header">
         <h1>Ma todolist</h1>
         <p className="app-subtitle">
-          Petit projet Next.js pour le rush <span>RUSH‑IA – Jour 03</span>.
+          Petit projet Next.js pour le rush{' '}
+          <a
+            href="https://github.com/marccharton/RUSHIA-Jour-03"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="subtitle-link"
+          >
+            RUSH‑IA – Jour 03
+          </a>
+          .
         </p>
       </header>
 
@@ -144,9 +153,43 @@ export default function Home() {
 
       {/* Pied de page */}
       <footer className="app-footer">
-        <span>RUSH‑IA – Jour 03</span>
+        <a
+          href="https://github.com/marccharton/RUSHIA-Jour-03"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="footer-link"
+        >
+          RUSH‑IA – Jour 03
+        </a>
         <span className="separator">•</span>
-        <span>Next.js / React / TypeScript</span>
+        <span>
+          <a
+            href="https://nextjs.org/docs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-link"
+          >
+            Next.js
+          </a>
+          {' / '}
+          <a
+            href="https://react.dev/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-link"
+          >
+            React
+          </a>
+          {' / '}
+          <a
+            href="https://www.typescriptlang.org/docs/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-link"
+          >
+            TypeScript
+          </a>
+        </span>
       </footer>
     </div>
   )
