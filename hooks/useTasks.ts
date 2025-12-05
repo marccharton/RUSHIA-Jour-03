@@ -159,13 +159,38 @@ export function useTasks() {
 
   /**
    * Supprime une tâche de la liste
+   * Met à jour la base de données Supabase pour persister la suppression
    * 
    * @param id - L'identifiant UUID de la tâche à supprimer
    */
-  const deleteTask = (id: string) => {
-    // filter() crée un nouveau tableau en gardant seulement les tâches
-    // dont l'ID est différent de celui à supprimer
+  const deleteTask = async (id: string) => {
+    // Trouver la tâche à supprimer pour pouvoir la restaurer en cas d'erreur
+    const taskToDelete = tasks.find(task => task.id === id)
+    if (!taskToDelete) {
+      return
+    }
+
+    // Mise à jour optimiste : supprimer la tâche de l'état local immédiatement
     setTasks(tasks.filter(task => task.id !== id))
+
+    try {
+      // Supprimer la tâche dans Supabase
+      const { error: deleteError } = await supabase
+        .from('tasks')
+        .delete()
+        .eq('id', id)
+
+      if (deleteError) {
+        throw deleteError
+      }
+    } catch (err) {
+      // En cas d'erreur, restaurer la tâche dans l'état local
+      setTasks([...tasks, taskToDelete])
+
+      // Afficher une erreur à l'utilisateur
+      setError(err instanceof Error ? err.message : 'Erreur lors de la suppression de la tâche')
+      setTimeout(() => setError(null), 5000)
+    }
   }
 
   // Calcul des statistiques des tâches
